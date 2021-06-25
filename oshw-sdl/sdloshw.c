@@ -149,7 +149,7 @@ int oshwinitialize(int silence, int soundbufsize,
 
 /* The real main().
  */
-int _start(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	return tworld(argc, argv);
 }
