@@ -21,11 +21,13 @@ oshwglobals sdlg;
  */
 #include "ccicon.c"
 
+const int buttonMapping[] = {SDLK_RETURN, 0, 0, SDLK_RETURN, SDLK_q, 0};
+
 /* Dispatch all events sitting in the SDL event queue. 
  */
 static void _eventupdate(int wait)
 {
-	static int mouselastx = -1, mouselasty = -1;
+	static int mouselastx = -1, mouselasty = -1, lastjoyhat = 0;
 	SDL_Event event;
 
 	if (wait)
@@ -35,24 +37,17 @@ static void _eventupdate(int wait)
 	{
 		switch (event.type)
 		{
-		case SDL_KEYDOWN:
+		case SDL_JOYBUTTONDOWN:
 			if (windowmappos(mouselastx, mouselasty) < 0)
 				SDL_ShowCursor(SDL_DISABLE);
-			keyeventcallback(event.key.keysym.sym, TRUE);
-			if (event.key.keysym.unicode && event.key.keysym.unicode != event.key.keysym.sym)
-			{
-				keyeventcallback(event.key.keysym.unicode, TRUE);
-				keyeventcallback(event.key.keysym.unicode, FALSE);
-			}
+			keyeventcallback(buttonMapping[event.jbutton.button], TRUE);
 			break;
-		case SDL_KEYUP:
+		case SDL_JOYBUTTONUP:
 			if (windowmappos(mouselastx, mouselasty) < 0)
 				SDL_ShowCursor(SDL_DISABLE);
-			keyeventcallback(event.key.keysym.sym, FALSE);
+			keyeventcallback(buttonMapping[event.jbutton.button], FALSE);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-		case SDL_MOUSEBUTTONUP:
-			SDL_ShowCursor(SDL_ENABLE);
 			mouselastx = event.motion.x;
 			mouselasty = event.motion.y;
 			mouseeventcallback(event.button.x, event.button.y,
@@ -60,9 +55,15 @@ static void _eventupdate(int wait)
 												 event.type == SDL_MOUSEBUTTONDOWN);
 			break;
 		case SDL_MOUSEMOTION:
-			SDL_ShowCursor(SDL_ENABLE);
 			mouselastx = event.motion.x;
 			mouselasty = event.motion.y;
+			break;
+		case SDL_JOYHATMOTION:
+				if((event.jhat.value & SDL_HAT_UP) != (lastjoyhat & SDL_HAT_UP)) keyeventcallback(SDLK_UP, event.jhat.value & SDL_HAT_UP);
+				if((event.jhat.value & SDL_HAT_RIGHT) != (lastjoyhat & SDL_HAT_RIGHT)) keyeventcallback(SDLK_RIGHT, event.jhat.value & SDL_HAT_RIGHT);
+				if((event.jhat.value & SDL_HAT_DOWN) != (lastjoyhat & SDL_HAT_DOWN)) keyeventcallback(SDLK_DOWN, event.jhat.value & SDL_HAT_DOWN);
+				if((event.jhat.value & SDL_HAT_LEFT) != (lastjoyhat & SDL_HAT_LEFT)) keyeventcallback(SDLK_LEFT, event.jhat.value & SDL_HAT_LEFT);
+				lastjoyhat = event.jhat.value;
 			break;
 		case SDL_QUIT:
 			exit(EXIT_SUCCESS);
@@ -124,7 +125,7 @@ int oshwinitialize(int silence, int soundbufsize,
 
 	geng.eventupdatefunc = _eventupdate;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
 		errmsg(NULL, "Cannot initialize SDL system: %s\n", SDL_GetError());
 		return FALSE;
@@ -132,6 +133,10 @@ int oshwinitialize(int silence, int soundbufsize,
 	atexit(shutdown);
 
 	setsubtitle(NULL);
+
+	SDL_JoystickOpen(0);
+
+	SDL_ShowCursor(SDL_ENABLE);
 
 	icon = SDL_CreateRGBSurfaceFrom(cciconimage, CXCCICON, CYCCICON,
 																	32, 4 * CXCCICON,
