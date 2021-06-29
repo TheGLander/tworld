@@ -12,6 +12,9 @@
 #include "sdlsfx.h"
 #include "../err.h"
 
+// Wii fix for cursor
+#include <wiiuse/wpad.h>
+
 /* Values global to this library.
  */
 oshwglobals sdlg;
@@ -27,36 +30,35 @@ const int buttonMapping[] = {SDLK_RETURN, 0, 0, SDLK_RETURN, SDLK_q, 0};
  */
 static void _eventupdate(int wait)
 {
-	static int mouselastx = -1, mouselasty = -1, lastjoyhat = 0;
+	static int lastjoyhat = 0;
 	SDL_Event event;
 
 	if (wait)
 		SDL_WaitEvent(NULL);
+
+	// This has to be done before event pumpage, wii sdl for some reason marks IR invalid after "generating" a mouse event
+	WPADData *wiimote = WPAD_Data(WPAD_CHAN_0);
+	if(wiimote->ir.valid) {
+		geng.cursorx = wiimote->ir.x;
+		geng.cursory= wiimote->ir.y;
+	}
+
 	SDL_PumpEvents();
 	while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS))
 	{
 		switch (event.type)
 		{
 		case SDL_JOYBUTTONDOWN:
-			if (windowmappos(mouselastx, mouselasty) < 0)
-				SDL_ShowCursor(SDL_DISABLE);
 			keyeventcallback(buttonMapping[event.jbutton.button], TRUE);
+			if(event.jbutton.button == 0 && wiimote->ir.valid) 
+				mouseeventcallback(geng.cursorx, geng.cursory, 1, TRUE);
+			
 			break;
 		case SDL_JOYBUTTONUP:
-			if (windowmappos(mouselastx, mouselasty) < 0)
-				SDL_ShowCursor(SDL_DISABLE);
 			keyeventcallback(buttonMapping[event.jbutton.button], FALSE);
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			mouselastx = event.motion.x;
-			mouselasty = event.motion.y;
-			mouseeventcallback(event.button.x, event.button.y,
-												 event.button.button,
-												 event.type == SDL_MOUSEBUTTONDOWN);
-			break;
-		case SDL_MOUSEMOTION:
-			mouselastx = event.motion.x;
-			mouselasty = event.motion.y;
+			if(event.jbutton.button == 0 && wiimote->ir.valid) 
+				mouseeventcallback(geng.cursorx, geng.cursory, 1, FALSE);
+			
 			break;
 		case SDL_JOYHATMOTION:
 				if((event.jhat.value & SDL_HAT_UP) != (lastjoyhat & SDL_HAT_UP)) keyeventcallback(SDLK_UP, event.jhat.value & SDL_HAT_UP);
@@ -136,7 +138,7 @@ int oshwinitialize(int silence, int soundbufsize,
 
 	SDL_JoystickOpen(0);
 
-	SDL_ShowCursor(SDL_ENABLE);
+	SDL_ShowCursor(SDL_DISABLE);
 
 	icon = SDL_CreateRGBSurfaceFrom(cciconimage, CXCCICON, CYCCICON,
 																	32, 4 * CXCCICON,

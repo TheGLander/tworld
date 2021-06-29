@@ -23,6 +23,9 @@
 #define	PROMPTICONW	16
 #define	PROMPTICONH	10
 
+#define CURSORW 11
+#define CURSORH 19
+
 /* Erase a rectangle (useful for when a surface is locked).
  */
 #define	fillrect(r)		(puttext((r), NULL, 0, PT_MULTILINE))
@@ -43,6 +46,14 @@ static msgdisplayinfo	msgdisplay;
 /* Some prompting icons.
  */
 static SDL_Surface     *prompticons = NULL;
+
+/* The cursor image.
+ */
+static SDL_Surface     *cursoricon = NULL;
+
+/* The rect to use with the cursor
+*/
+static SDL_Rect cursor_rect = {.x = 0, .y = 0, .w = CURSORW, .h = CURSORH};
 
 /* TRUE means the program should attempt to run in fullscreen mode.
  */
@@ -145,6 +156,55 @@ static int createprompticons(void)
 	       &prompticons->format->palette->colors[2].r,
 	       &prompticons->format->palette->colors[2].g,
 	       &prompticons->format->palette->colors[2].b);
+
+    return TRUE;
+}
+
+/* Create the cursor icon for display.
+ */
+static int createcursoricon(void)
+{
+  static Uint8 cursorpixels[CURSORW * CURSORH] = {
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+		1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+		1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+		1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+		1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+		1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+		1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+		1, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
+		1, 2, 1, 0, 1, 2, 2, 1, 0, 0, 0,
+		1, 1, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+		1, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+		0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+		0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+		0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+		0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
+	};
+
+    if (!cursoricon) {
+	cursoricon = SDL_CreateRGBSurfaceFrom(cursorpixels,
+					       CURSORW, CURSORH,
+					       8, CURSORW, 0, 0, 0, 0);
+	if (!cursoricon) {
+	    warn("couldn't create SDL surface: %s", SDL_GetError());
+	    return FALSE;
+	}
+    }
+
+    SDL_SetColorKey(cursoricon, SDL_SRCCOLORKEY, 0);
+    SDL_GetRGB(0x000000, geng.screen->format,
+	       &cursoricon->format->palette->colors[1].r,
+	       &cursoricon->format->palette->colors[1].g,
+	       &cursoricon->format->palette->colors[1].b);
+    SDL_GetRGB(0xffffff, geng.screen->format,
+	       &cursoricon->format->palette->colors[2].r,
+	       &cursoricon->format->palette->colors[2].g,
+	       &cursoricon->format->palette->colors[2].b);
 
     return TRUE;
 }
@@ -519,6 +579,7 @@ void setcolors(long bkgnd, long text, long bold, long dim)
 			(bold >> 16) & 255, (bold >> 8) & 255, bold & 255);
 
     createprompticons();
+		createcursoricon();
 }
 
 /* Create the game's display. state is a pointer to the gamestate
@@ -530,6 +591,8 @@ int displaygame(gamestate const *state, int timeleft, int besttime, int showinit
 	displayshutter();
     } else {
 	displaymapview(state, displayloc);
+	SDL_Rect cursor = {.x = geng.cursorx, .y = geng.cursory, .w = CURSORW, .h = CURSORH};
+	SDL_BlitSurface(cursoricon, &cursor_rect, geng.screen, &cursor);
     }
     displayinfo(state, timeleft, besttime);
     displaymsg(FALSE);
@@ -850,7 +913,7 @@ int _sdloutputinitialize(int _fullscreen)
 
     cleardisplay();
 
-    if (!createprompticons())
+    if (!createprompticons() || !createcursoricon())
 	return FALSE;
 
     return TRUE;

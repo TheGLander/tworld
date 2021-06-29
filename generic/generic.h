@@ -44,6 +44,8 @@ typedef struct genericglobals
      */
 	int mapvieworigin;
 
+	int cursorx, cursory;
+
 	/* 
      * Shared functions.
      */
