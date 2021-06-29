@@ -31,7 +31,7 @@ INCLUDES	:=
 # options for code generation
 #---------------------------------------------------------------------------------
 
-DECLARES = -DROOTDIR="/tworld" -DROOTDIR="/tworld/save"
+DECLARES = -DROOTDIR='"/tworld"' -DSAVEDIR='"/tworld/save"'
 
 CFLAGS		=	-g -O2 -Wall $(MACHDEP) $(INCLUDE) $(DECLARES) `$(PREFIX)pkg-config --cflags sdl`
 CXXFLAGS	=	$(CFLAGS)

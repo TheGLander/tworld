@@ -75,17 +75,13 @@ static keycmdmap const gamekeycmds[] = {
 #else
     { 'q',                        0,  0,  0,   CmdQuitLevel,          FALSE },
 #endif
-    { 'p',                        0, +1,  0,   CmdPrevLevel,          FALSE },
-    { 'r',                        0, +1,  0,   CmdSameLevel,          FALSE },
-    { 'n',                        0, +1,  0,   CmdNextLevel,          FALSE },
-    { 'g',                        0, -1,  0,   CmdGotoLevel,          FALSE },
+    { '1',                        0, -1,  0,   CmdPrev,          FALSE },
+    { 'b',                        0, -1,  0,   CmdSameLevel,          FALSE },
+    { '2',                        0, -1,  0,   CmdNext,          FALSE },
 #ifndef TWPLUSPLUS
     { 'q',                       +1,  0,  0,   CmdQuit,               FALSE },
 #endif
     { TWK_PAGEUP,                -1, -1,  0,   CmdPrev10,             FALSE },
-    { 'p',                        0,  0,  0,   CmdPrev,               FALSE },
-    { 'r',                        0,  0,  0,   CmdSame,               FALSE },
-    { 'n',                        0,  0,  0,   CmdNext,               FALSE },
     { TWK_PAGEDOWN,              -1, -1,  0,   CmdNext10,             FALSE },
     { TWK_BACKSPACE,             -1, -1,  0,   CmdPauseGame,          FALSE },
 /* TEMP disabling help */
@@ -93,19 +89,15 @@ static keycmdmap const gamekeycmds[] = {
     { '?',                       -1, -1,  0,   CmdHelp,               FALSE },
     { TWK_F1,                    -1, -1,  0,   CmdHelp,               FALSE },
 #endif
-    { 'o',                        0,  0,  0,   CmdStepping,           FALSE },
-    { 'o',                       +1,  0,  0,   CmdSubStepping,        FALSE },
-    { 'f',                        0,  0,  0,   CmdRandomFF,           FALSE },
     { 'd',                        0,  0,  0,   CmdShowInitState,      FALSE },
     { 'e',                        0,  0,  0,   CmdAdvanceGame,        FALSE },
     { 'e',                       +1,  0,  0,   CmdAdvanceMoveGame,    FALSE },
-    { TWK_TAB,                    0, -1,  0,   CmdPlayback,           FALSE },
     { TWK_TAB,                   +1, -1,  0,   CmdCheckSolution,      FALSE },
     { 'i',                        0, +1,  0,   CmdPlayback,           FALSE },
     { 'i',                       +1, +1,  0,   CmdCheckSolution,      FALSE },
     { 'x',                        0, +1,  0,   CmdReplSolution,       FALSE },
     { 'x',                       +1, +1,  0,   CmdKillSolution,       FALSE },
-    { 's',                        0,  0,  0,   CmdSeeScores,          FALSE },
+    { TWK_DOWN,                   0,  0,  0,   CmdSeeScores,          FALSE },
     { 's',                        0, +1,  0,   CmdSeeSolutionFiles,   FALSE },
     { 'v',                       +1,  0,  0,   CmdVolumeUp,           FALSE },
     { 'v',                        0,  0,  0,   CmdVolumeDown,         FALSE },
@@ -520,64 +512,43 @@ int _genericinputinitialize(void)
 tablespec const *keyboardhelp(int which)
 {
     static char const *ingame_items[] = {
-	"1-arrows", "1-move Chip",
-	"1-2 4 6 8 (keypad)", "1-also move Chip",
-	"1-Q", "1-quit the current game",
-	"1-Bkspc", "1-pause the game",
-	"1-Ctrl-R", "1-restart the current level",
-	"1-Ctrl-P", "1-jump to the previous level",
-	"1-Ctrl-N", "1-jump to the next level",
-	"1-V", "1-decrease volume",
-	"1-Shift-V", "1-increase volume",
-	"1-Ctrl-C", "1-exit the program",
-	"1-Alt-F4", "1-exit the program"
+	"1-Dpad", "1-move Chip",
+	"1- -", "1-quit the current game",
+	"1-B", "1-restart the current level",
+	"1-1", "1-jump to the previous level",
+	"1-2", "1-jump to the next level",
     };
-    static tablespec const keyhelp_ingame = { 11, 2, 4, 1, ingame_items };
+    static tablespec const keyhelp_ingame = { 5, 2, 4, 1, ingame_items };
 
     static char const *twixtgame_items[] = {
-	"1-P", "1-jump to the previous level",
-	"1-N", "1-jump to the next level",
-	"1-PgUp", "1-skip back ten levels",
-	"1-PgDn", "1-skip ahead ten levels",
-	"1-G", "1-go to a level using a password",
-	"1-S", "1-see the scores for each level",
-	"1-Tab", "1-playback saved solution",
-	"1-Shift-Tab", "1-verify saved solution",
-	"1-Ctrl-X", "1-replace existing solution",
-	"1-Shift-Ctrl-X", "1-delete existing solution",
-	"1-Ctrl-S", "1-see the available solution files",
-	"1-O", "1-toggle between even-step and odd-step offset",
-	"1-Shift-O", "1-increment stepping offset (Lynx only)",
-	"1-F", "1-Change initial \"random\" force floor direction (Lynx only)",
-	"1-V", "1-decrease volume",
-	"1-Shift-V", "1-increase volume",
-	"1-Q", "1-return to the file list",
-	"1-Ctrl-C", "1-exit the program",
-	"1-Alt-F4", "1-exit the program"
+	"1-Dpad left", "1-jump to the previous level",
+	"1-Dpad right", "1-jump to the next level",
+	"1-Dpad up", "1-playback saved solution",
+	"1-Dpad down", "1-see the scores for each level",
+	"1-1", "1-toggle between even-step and odd-step offset (MS)",
+	"1-1", "1-increment stepping offset (Lynx)",
+	"1-2", "1-Change initial \"random\" force floor direction (Lynx)",
+	"1- -", "1-return to the file list",
     };
-    static tablespec const keyhelp_twixtgame = { 19, 2, 4, 1,
+    static tablespec const keyhelp_twixtgame = { 8, 2, 4, 1,
 						 twixtgame_items };
 
     static char const *scorelist_items[] = {
-	"1-up down", "1-move selection",
-	"1-PgUp PgDn", "1-scroll selection",
-	"1-Enter Space", "1-select level",
-	"1-Ctrl-S", "1-change solution file",
-	"1-Q", "1-return to the last level",
-	"1-Ctrl-C", "1-exit the program",
-	"1-Alt-F4", "1-exit the program"
-    };
-    static tablespec const keyhelp_scorelist = { 7, 2, 4, 1, scorelist_items };
+	"1-Dpad up down", "1-move selection",
+	"1-Dpad left right", "1-scroll selection",
+	"1-A", "1-select level",
+	"1-B", "1-change solution file",
+	"1- -", "1-return to the last level",
+  };
+    static tablespec const keyhelp_scorelist = { 5, 2, 4, 1, scorelist_items };
 
     static char const *scroll_items[] = {
-	"1-up down", "1-move selection",
-	"1-PgUp PgDn", "1-scroll selection",
-	"1-Enter Space", "1-select",
-	"1-Q", "1-cancel",
-	"1-Ctrl-C", "1-exit the program",
-	"1-Alt-F4", "1-exit the program"
+	"1-Dpad up down", "1-move selection",
+	"1-Dpad left right", "1-scroll selection",
+	"1-A", "1-select",
+	"1--", "1-cancel",
     };
-    static tablespec const keyhelp_scroll = { 6, 2, 4, 1, scroll_items };
+    static tablespec const keyhelp_scroll = { 4, 2, 4, 1, scroll_items };
 
     static char const *twplusplus_items[] = {
 	"1-Key", "1-Action",

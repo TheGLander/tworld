@@ -24,7 +24,8 @@ oshwglobals sdlg;
  */
 #include "ccicon.c"
 
-const int buttonMapping[] = {SDLK_RETURN, 0, 0, SDLK_RETURN, SDLK_q, 0};
+// A B 1 2 - + HOME
+const int buttonMapping[] = {SDLK_RETURN, SDLK_b, SDLK_1, SDLK_2, SDLK_q, SDLK_F1};
 
 /* Dispatch all events sitting in the SDL event queue. 
  */

@@ -887,27 +887,25 @@ static int startinput(gamespec *gs)
     gs->playmode = Play_None;
     for (;;) {
 	cmd = input(TRUE);
-	if (cmd >= CmdMoveFirst && cmd <= CmdMoveLast) {
+	/*if (cmd >= CmdMoveFirst && cmd <= CmdMoveLast) {
 	    gs->playmode = Play_Normal;
 	    return cmd;
-	}
+	}*/
 	switch (cmd) {
 	  case CmdProceed:	gs->playmode = Play_Normal;	return cmd;
 	  case CmdQuitLevel:					return cmd;
 	  case CmdPrev10:	leveldelta(-10);		return CmdNone;
-	  case CmdPrev:		leveldelta(-1);			return CmdNone;
-	  case CmdPrevLevel:	leveldelta(-1);			return CmdNone;
-	  case CmdNextLevel:	leveldelta(+1);			return CmdNone;
-	  case CmdNext:		leveldelta(+1);			return CmdNone;
+	  case CmdWest:	leveldelta(-1);			return CmdNone;
+	  case CmdEast:	leveldelta(+1);			return CmdNone;
 	  case CmdNext10:	leveldelta(+10);		return CmdNone;
 	  case CmdStepping:	changestepping(4, TRUE);	break;
-	  case CmdSubStepping:	changestepping(1, TRUE);	break;
-	  case CmdRandomFF:     advanceinitrandomff(TRUE);	break;
+	  case CmdPrev:	changestepping(1, TRUE);	break;
+	  case CmdNext:     advanceinitrandomff(TRUE);	break;
 	  case CmdVolumeUp:	changevolume(+2, TRUE);		break;
 	  case CmdVolumeDown:	changevolume(-2, TRUE);		break;
 	  case CmdHelp:		dohelp(Help_KeysBetweenGames);	break;
 	  case CmdQuit:						exit(0);
-	  case CmdPlayback:
+	  case CmdNorth:
 	  case CmdAdvanceGame:
 	  case CmdAdvanceMoveGame:
 	    if (prepareplayback()) {
@@ -949,7 +947,7 @@ static int startinput(gamespec *gs)
 		if (deletesolution())
 		    savesolutions(&gs->series);
 	    break;
-	  case CmdSeeScores:
+	  case CmdSouth:
 	    if (showscores(gs))
 		return CmdNone;
 	    break;
@@ -1604,7 +1602,7 @@ static int findseries(seriesdata *series, int idx)
 static int chooseseries(seriesdata *series, int *pn, int founddefault)
 {
 #ifndef TWPLUSPLUS
-    return displaylist("   Welcome to Tile World. Type ? or F1 for help.",
+    return displaylist("   Welcome to Tile World. Press + for help.",
 		&series->table, pn, LIST_SERIES, scrollinputcallback);    
 #else
     tablespec mftable;

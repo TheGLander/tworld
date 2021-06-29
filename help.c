@@ -234,13 +234,12 @@ void onlinemainhelp(int topic)
 {
 	static char const *items[] = {
 			"2-",
-			"1+\267", "1-Key commands during the game",
-			"1+\267", "1-Key commands inbetween games",
+			"1+\267", "1-Button commands during the game",
+			"1+\267", "1-Button commands inbetween games",
 			"1+\267", "1-Objects of the game",
-			"1+\267", "1-Command-line options",
 			"1+\267", "1-About Tile World",
 			"1+\267", "1-Return to the program"};
-	static tablespec const table = {7, 2, 4, 1, items};
+	static tablespec const table = {6, 2, 4, 1, items};
 
 	int n;
 
@@ -254,9 +253,6 @@ void onlinemainhelp(int topic)
 		break;
 	case Help_ObjectsOfGame:
 		n = 2;
-		break;
-	case Help_CmdlineOptions:
-		n = 3;
 		break;
 	case Help_AboutGame:
 		n = 4;
@@ -273,12 +269,12 @@ void onlinemainhelp(int topic)
 		switch (n)
 		{
 		case 0:
-			displaytable("KEYS - DURING THE GAME",
+			displaytable("BUTTONS - DURING THE GAME",
 									 keyboardhelp(KEYHELP_INGAME), -1);
 			anykey();
 			break;
 		case 1:
-			displaytable("KEYS - INBETWEEN GAMES",
+			displaytable("BUTTONS - INBETWEEN GAMES",
 									 keyboardhelp(KEYHELP_TWIXTGAMES), -1);
 			anykey();
 			break;
@@ -310,14 +306,11 @@ void onlinecontexthelp(int topic)
 			" wish to play. The opening screen shows you the list of all the"
 			" level sets that are currently available. Use the up and down"
 			" arrows to move the selection. When the level set of your choice"
-			" is selected, press Enter to begin.",
+			" is selected, press A to begin.",
 			"1-",
-			"1!If the list is long, you may also use the PgUp and PgDn keys to"
-			" scroll one windowful at a time.",
-			"1-",
-			"1!At any point in the program, you may use the Q key to quit the"
-			" current activity and go back up one step. Typing Shift-Q will"
-			" exit Tile World completely. Typing ? or F1 at any time will bring"
+			"1!At any point in the program, you may use the - button to quit the"
+			" current activity and go back up one step. Pressing HOME will"
+			" exit Tile World completely. Pressing + at any time will bring"
 			" up a list of online help topics.",
 			"1-",
 			"1!Tile World also comes with offline documentation. Please see the"
