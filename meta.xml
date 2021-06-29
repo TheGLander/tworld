@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="1">
+	<name>Tile world</name>
+	<version>1.4</version>
+	<release_date>20210629144434</release_date>
+	<coder>Brian Raiter, Port by G lander</coder>
+	<short_description>Chip's Challenge clone</short_description>
+	<long_description>This is a port of the game Tile World, which emulates the popular game &quot;Chip&apos;s Challenge&quot;.
+Put your stuff (res, sets, data, save, etc.) in the /tworld folder on the SD card or flash drive this is on!
+</long_description>
+	<ahb_access/>
+</app>

@@ -23,7 +23,7 @@ include $(DEVKITPPC)/wii_rules
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	. oshw-sdl generic
-DATA		:=      data
+DATA		:= 
 TEXTURES	:=	textures
 INCLUDES	:=
 
@@ -31,7 +31,7 @@ INCLUDES	:=
 # options for code generation
 #---------------------------------------------------------------------------------
 
-DECLARES = -DROOTDIR='"/tworld"' -DSAVEDIR='"/tworld/save"'
+DECLARES = -DROOTDIR='"/tworld"'
 
 CFLAGS		=	-g -O2 -Wall $(MACHDEP) $(INCLUDE) $(DECLARES) `$(PREFIX)pkg-config --cflags sdl`
 CXXFLAGS	=	$(CFLAGS)
@@ -174,35 +174,21 @@ endif
 	@echo $(notdir $<)
 	$(bin2o)
 
-#---------------------------------------------------------------------------------
-# This rule links in binary data with the .dat extension
-#---------------------------------------------------------------------------------
-%.dat.o	:	%.dat
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	$(bin2o)
-
-#---------------------------------------------------------------------------------
-# This rule links in binary data with the .dac extension
-#---------------------------------------------------------------------------------
-%.dac.o	:	%.dac
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	$(bin2o)
-
-#---------------------------------------------------------------------------------
-# This rule links in binary data with the .ccx extension
-#---------------------------------------------------------------------------------
-%.ccx.o	:	%.ccx
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	$(bin2o)
-
--include $(DEPENDS)
-
-
-
 
 test:
 	make
 	wiiload *.dol
+
+package:
+	make
+	rm -rf pkgtemp tworld-wii.zip
+	mkdir pkgtemp
+	mkdir pkgtemp/apps
+	mkdir pkgtemp/apps/tworld-wii
+	mkdir pkgtemp/tworld
+	cp {data,res,sets} pkgtemp/tworld -r
+	mkdir pkgtemp/tworld/save
+	cp icon.png meta.xml pkgtemp/apps/tworld-wii
+	cp tworld-wii.dol pkgtemp/apps/tworld-wii/boot.dol
+	cd pkgtemp;zip -rq ../tworld-wii.zip ./*
+	rm -rf pkgtemp

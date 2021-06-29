@@ -1,6 +1,8 @@
 /build
+/pkgtemp
 *.dol
 *.elf
+*.zip
 .vscode
 /comptime.h
 /oshw-qt/ui_*.h
