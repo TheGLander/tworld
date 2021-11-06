@@ -22,18 +22,18 @@ TW_Surface *TW_NewSurface(int w, int h, int transparency)
 
     if (transparency) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	s = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA | SDL_RLEACCEL,
+	s = SDL_CreateRGBSurface(0,
 				 w, h, 32,
 				 0xFF000000, 0x00FF0000,
 				 0x0000FF00, 0x000000FF);
 #else
-	s = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA | SDL_RLEACCEL,
+	s = SDL_CreateRGBSurface(0,
 				 w, h, 32,
 				 0x000000FF, 0x0000FF00,
 				 0x00FF0000, 0xFF000000);
 #endif
     } else {
-	s = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	s = SDL_CreateRGBSurface(0,
 				 w, h, geng.screen->format->BitsPerPixel,
 				 geng.screen->format->Rmask,
 				 geng.screen->format->Gmask,
@@ -43,7 +43,7 @@ TW_Surface *TW_NewSurface(int w, int h, int transparency)
     if (!s)
 	die("couldn't create surface: %s", SDL_GetError());
     if (!transparency && geng.screen->format->palette)
-	SDL_SetColors(s, geng.screen->format->palette->colors,
+	SDL_SetPaletteColors(s->format->palette, geng.screen->format->palette->colors,
 		      0, geng.screen->format->palette->ncolors);
     return s;
 }
@@ -86,7 +86,7 @@ TW_Surface *TW_LoadBMP(char const *filename, int setscreenpalette)
     tiles = SDL_LoadBMP(filename);
     if (tiles && setscreenpalette) {
 	if (tiles->format->palette && geng.screen->format->palette)
-	    SDL_SetColors(geng.screen, tiles->format->palette->colors,
+	    SDL_SetPaletteColors(geng.screen->format->palette, tiles->format->palette->colors,
 			  0, tiles->format->palette->ncolors);
     }
 

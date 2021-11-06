@@ -21,7 +21,22 @@ else()
 endif()
 
 # We still require SDL even for the Qt build...
-find_package(SDL REQUIRED)
+
+if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+    find_package(SDL REQUIRED)
+else()
+    set(USE_FLAGS "-s USE_SDL=2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS}")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}\
+                                -s FORCE_FILESYSTEM=1 --preload-file data\
+                                --preload-file res --preload-file sets\
+                                --emit-symbol-map -s STB_IMAGE=1\
+                                -s ASYNCIFY -s ALLOW_MEMORY_GROWTH=1\
+                                -s EXIT_RUNTIME=1")
+    set(CMAKE_EXECUTABLE_SUFFIX .html)
+endif()
+
 if(OSHW STREQUAL "qt")
     set(CMAKE_AUTOUIC TRUE)
     set(CMAKE_AUTOMOC TRUE)

@@ -1824,8 +1824,10 @@ static void initdirs(char const *series, char const *seriesdat,
 		warn("Value of environment variable TWORLDDIR is too long");
 	}
 	if (!root) {
+#ifndef EMSCRIPTEN
 #ifdef ROOTDIR
 	    root = ROOTDIR;
+#endif
 #else
 	    root = ".";
 #endif

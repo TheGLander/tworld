@@ -258,7 +258,7 @@ static void _keyeventcallback(int scancode, int down)
  */
 static void restartkeystates(void)
 {
-    uint8_t    *keyboard;
+    const Uint8    *keyboard;
     int		count, n;
 
     memset(keystates, KS_OFF, sizeof keystates);
