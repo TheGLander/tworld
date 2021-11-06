@@ -33,7 +33,7 @@ else()
                                 --preload-file res --preload-file sets\
                                 --emit-symbol-map -s STB_IMAGE=1\
                                 -s ASYNCIFY -s ALLOW_MEMORY_GROWTH=1\
-                                -s EXIT_RUNTIME=1")
+                                -s EXIT_RUNTIME=1 --shell-file shell.html")
     set(CMAKE_EXECUTABLE_SUFFIX .html)
 endif()
 

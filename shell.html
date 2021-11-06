@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Emscripten-Generated Code</title>
+		<style>
+			.center-text {
+				text-align: center;
+			}
+
+			#canvas {
+				border: 0px none;
+				background-color: black;
+				padding-right: 0;
+				margin-left: auto;
+				margin-right: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="center-text" id="status">Downloading...</div>
+		<div class="center-text">
+			<a href="https://github.com/TheGLander/tworld-wii/tree/emscripten"
+				>Check out the source code!</a
+			>
+		</div>
+		<canvas id="canvas" tabindex="-1"></canvas>
+
+		<script type="text/javascript">
+			const statusElement = document.getElementById("status")
+			const canvasElement = document.getElementById("canvas")
+			canvasElement.style.display = "none"
+
+			canvasElement.addEventListener("contextmenu", () =>
+				event.preventDefault()
+			)
+
+			globalThis.Module = {
+				preRun: [() => (canvasElement.style.display = "block")],
+				postRun: [],
+				print: console.log,
+				printErr: console.error,
+				canvas: canvasElement,
+				setStatus: text => (statusElement.innerText = text),
+				totalDependencies: 0,
+				monitorRunDependencies: function (left) {
+					this.totalDependencies = Math.max(this.totalDependencies, left)
+					Module.setStatus(
+						left
+							? "Preparing... (" +
+									(this.totalDependencies - left) +
+									"/" +
+									this.totalDependencies +
+									")"
+							: "All downloads complete."
+					)
+				},
+			}
+			Module.setStatus("Downloading...")
+		</script>
+		{{{ SCRIPT }}}
+	</body>
+</html>
