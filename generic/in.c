@@ -226,8 +226,6 @@ static int mergeable[CmdKeyMoveLast + 1];
  */
 static void _keyeventcallback(int scancode, int down)
 {
-    printf("%i is %i\n", scancode, down);
-    printf("? is %i\n", '?');
     switch (scancode) {
       case TWK_LSHIFT:
       case TWK_RSHIFT:
