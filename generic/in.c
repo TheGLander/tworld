@@ -73,45 +73,45 @@ static keycmdmap const gamekeycmds[] = {
 #ifdef TWPLUSPLUS
     { TWK_ESCAPE,                 0,  0,  0,   CmdQuitLevel,          FALSE },
 #else
-    { 'q',                        0,  0,  0,   CmdQuitLevel,          FALSE },
+    { TWK_Q,                        0,  0,  0,   CmdQuitLevel,          FALSE },
 #endif
-    { 'p',                        0, +1,  0,   CmdPrevLevel,          FALSE },
-    { 'r',                        0, +1,  0,   CmdSameLevel,          FALSE },
-    { 'n',                        0, +1,  0,   CmdNextLevel,          FALSE },
-    { 'g',                        0, -1,  0,   CmdGotoLevel,          FALSE },
+    { TWK_P,                        0, +1,  0,   CmdPrevLevel,          FALSE },
+    { TWK_R,                        0, +1,  0,   CmdSameLevel,          FALSE },
+    { TWK_N,                        0, +1,  0,   CmdNextLevel,          FALSE },
+    { TWK_G,                        0, -1,  0,   CmdGotoLevel,          FALSE },
 #ifndef TWPLUSPLUS
-    { 'q',                       +1,  0,  0,   CmdQuit,               FALSE },
+    { TWK_Q,                       +1,  0,  0,   CmdQuit,               FALSE },
 #endif
     { TWK_PAGEUP,                -1, -1,  0,   CmdPrev10,             FALSE },
-    { 'p',                        0,  0,  0,   CmdPrev,               FALSE },
-    { 'r',                        0,  0,  0,   CmdSame,               FALSE },
-    { 'n',                        0,  0,  0,   CmdNext,               FALSE },
+    { TWK_P,                        0,  0,  0,   CmdPrev,               FALSE },
+    { TWK_R,                        0,  0,  0,   CmdSame,               FALSE },
+    { TWK_N,                        0,  0,  0,   CmdNext,               FALSE },
     { TWK_PAGEDOWN,              -1, -1,  0,   CmdNext10,             FALSE },
     { TWK_BACKSPACE,             -1, -1,  0,   CmdPauseGame,          FALSE },
 /* TEMP disabling help */
 #ifndef TWPLUSPLUS
-    { '?',                       -1, -1,  0,   CmdHelp,               FALSE },
+    { TWK_SLASH,                 +1, -1,  0,   CmdHelp,               FALSE },
     { TWK_F1,                    -1, -1,  0,   CmdHelp,               FALSE },
 #endif
-    { 'o',                        0,  0,  0,   CmdStepping,           FALSE },
-    { 'o',                       +1,  0,  0,   CmdSubStepping,        FALSE },
-    { 'f',                        0,  0,  0,   CmdRandomFF,           FALSE },
-    { 'd',                        0,  0,  0,   CmdShowInitState,      FALSE },
-    { 'e',                        0,  0,  0,   CmdAdvanceGame,        FALSE },
-    { 'e',                       +1,  0,  0,   CmdAdvanceMoveGame,    FALSE },
+    { TWK_O,                        0,  0,  0,   CmdStepping,           FALSE },
+    { TWK_O,                       +1,  0,  0,   CmdSubStepping,        FALSE },
+    { TWK_F,                        0,  0,  0,   CmdRandomFF,           FALSE },
+    { TWK_D,                        0,  0,  0,   CmdShowInitState,      FALSE },
+    { TWK_E,                        0,  0,  0,   CmdAdvanceGame,        FALSE },
+    { TWK_E,                       +1,  0,  0,   CmdAdvanceMoveGame,    FALSE },
     { TWK_TAB,                    0, -1,  0,   CmdPlayback,           FALSE },
     { TWK_TAB,                   +1, -1,  0,   CmdCheckSolution,      FALSE },
-    { 'i',                        0, +1,  0,   CmdPlayback,           FALSE },
-    { 'i',                       +1, +1,  0,   CmdCheckSolution,      FALSE },
-    { 'x',                        0, +1,  0,   CmdReplSolution,       FALSE },
-    { 'x',                       +1, +1,  0,   CmdKillSolution,       FALSE },
-    { 's',                        0,  0,  0,   CmdSeeScores,          FALSE },
-    { 's',                        0, +1,  0,   CmdSeeSolutionFiles,   FALSE },
-    { 'v',                       +1,  0,  0,   CmdVolumeUp,           FALSE },
-    { 'v',                        0,  0,  0,   CmdVolumeDown,         FALSE },
+    { TWK_I,                        0, +1,  0,   CmdPlayback,           FALSE },
+    { TWK_I,                       +1, +1,  0,   CmdCheckSolution,      FALSE },
+    { TWK_X,                        0, +1,  0,   CmdReplSolution,       FALSE },
+    { TWK_X,                       +1, +1,  0,   CmdKillSolution,       FALSE },
+    { TWK_S,                        0,  0,  0,   CmdSeeScores,          FALSE },
+    { TWK_S,                        0, +1,  0,   CmdSeeSolutionFiles,   FALSE },
+    { TWK_V,                       +1,  0,  0,   CmdVolumeUp,           FALSE },
+    { TWK_V,                        0,  0,  0,   CmdVolumeDown,         FALSE },
     { TWK_RETURN,                -1, -1,  0,   CmdProceed,            FALSE },
     { TWK_KP_ENTER,              -1, -1,  0,   CmdProceed,            FALSE },
-    { ' ',                       -1, -1,  0,   CmdProceed,            FALSE },
+    { TWK_SPACE,                       -1, -1,  0,   CmdProceed,            FALSE },
 #ifndef NDEBUG
     { 'd',                        0, +1,  0,   CmdDebugCmd1,          FALSE },
     { 'd',                       +1, +1,  0,   CmdDebugCmd2,          FALSE },
@@ -226,6 +226,8 @@ static int mergeable[CmdKeyMoveLast + 1];
  */
 static void _keyeventcallback(int scancode, int down)
 {
+    printf("%i is %i\n", scancode, down);
+    printf("? is %i\n", '?');
     switch (scancode) {
       case TWK_LSHIFT:
       case TWK_RSHIFT:

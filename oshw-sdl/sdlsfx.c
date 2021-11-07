@@ -129,7 +129,6 @@ static void sfxcallback(void *data, Uint8 *wave, int len)
 	} else {
 	    SDL_MixAudio(wave, sounds[i].wave + sounds[i].pos, n, volume);
 	    sounds[i].pos = 0;
-        printf("sound end: %i\nlen: %i\npos: %i\nleft to play: %i\nbuf len: %i\n", i, sounds[i].len, sounds[i].pos, n, len);
 	    if (i < SND_ONESHOT_COUNT) {
 		sounds[i].playing = FALSE;
 	    } else if (sounds[i].playing) {
@@ -138,7 +137,7 @@ static void sfxcallback(void *data, Uint8 *wave, int len)
 				 volume);
 		    n += sounds[i].len;
 		}
-		SDL_MixAudio(wave + n, sounds[i].wave, len - n, volume);
+		// SDL_MixAudio(wave + n, sounds[i].wave, len - n, volume);
         // Hack, having pos be non-0 creates audio corruption for some reason
         sounds[i].pos = 0;
 	    }
