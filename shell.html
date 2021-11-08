@@ -36,8 +36,34 @@
 				event.preventDefault()
 			)
 
+			const params = new URLSearchParams(location.search)
+			const mapPath = params.get("map")
+			const levelId = params.get("levelId")
+			const solution = params.get("solution")
+			const lynx = params.get("lynx")
+
 			globalThis.Module = {
-				preRun: [() => (canvasElement.style.display = "block")],
+				arguments: ["-p"],
+				preRun: [
+					() => {
+						if (lynx !== null) Module.arguments.push("-x")
+						if (!mapPath) return
+						FS.createPreloadedFile("/", "custom.dat", mapPath, true, true)
+						Module.arguments.push("/custom.dat")
+						if (solution || levelId) Module.arguments.push(levelId || "1")
+						if (solution) {
+							FS.createPreloadedFile(
+								"/",
+								"/customSol.tws",
+								solution,
+								true,
+								true
+							)
+							Module.arguments.push("/customSol.tws")
+						}
+					},
+					() => (canvasElement.style.display = "block"),
+				],
 				postRun: [],
 				print: console.log,
 				printErr: console.error,

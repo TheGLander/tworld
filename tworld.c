@@ -51,6 +51,7 @@ typedef	struct startupdata {
     int		listscores;	/* TRUE if the scores should be listed */
     int		listtimes;	/* TRUE if the times should be listed */
     int		batchverify;	/* TRUE to enter batch verification */
+		int  lynxmode; /* TRUE to use Lynx for the initial level */
 } startupdata;
 
 /* History of levelsets in order of last used date/time.
@@ -1897,7 +1898,7 @@ static int initoptionswithcmdline(int argc, char *argv[], startupdata *start)
     soundbufsize = 0;
     volumelevel = -1;
 
-    initoptions(&opts, argc - 1, argv + 1, "abD:dFfHhL:lm:n:PpqR:rS:stVv");
+    initoptions(&opts, argc - 1, argv + 1, "abD:dFfHhL:lm:n:PxpqR:rS:stVv");
     while ((ch = readoption(&opts)) >= 0) {
 	switch (ch) {
 	  case 0:
@@ -1928,6 +1929,7 @@ static int initoptionswithcmdline(int argc, char *argv[], startupdata *start)
 	  case 'q':	silence = !silence;				break;
 	  case 'r':	readonly = !readonly;				break;
 	  case 'P':	pedantic = !pedantic;				break;
+		case 'x': start->lynxmode = TRUE;     break;
 	  case 'a':	++soundbufsize;					break;
 	  case 'd':	listdirs = TRUE;				break;
 	  case 'l':	start->listseries = TRUE;			break;
@@ -2059,6 +2061,7 @@ static int choosegameatstartup(gamespec *gs, char const *lastseries,
 	    errmsg(series.list[0].filebase, "cannot read level set");
 	    return -1;
 	}
+	if (start->lynxmode) series.list[0].ruleset = Ruleset_Lynx;
 	if (start->batchverify) {
 	    n = batchverify(series.list, !silence && !start->listtimes
 						  && !start->listscores);
