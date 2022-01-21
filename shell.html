@@ -43,7 +43,7 @@
 			const lynx = params.get("lynx")
 
 			globalThis.Module = {
-				arguments: ["-p"],
+				arguments: ["-p", "-o"],
 				preRun: [
 					() => {
 						if (lynx !== null) Module.arguments.push("-x")

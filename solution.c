@@ -615,8 +615,8 @@ int readsolutions(gameseries *series)
 		warn("solution file %s as was"
 				     " recorded for a different level set: %s",
 		       series->savefile.name, gametmp.name);
-		series->gsflags |= GSF_NOSAVING;
-		return FALSE;
+		// series->gsflags |= GSF_NOSAVING;
+		// return FALSE;
 	    }
 	    continue;
 	}

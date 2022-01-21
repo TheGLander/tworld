@@ -59,6 +59,8 @@ typedef	struct startupdata {
 static history *historylist = NULL;
 static int	historycount = 0;
 
+static int noLevelMove = 0;
+
 /* Structure used to hold the complete list of available series.
  */
 typedef	struct seriesdata {
@@ -479,7 +481,7 @@ static int changecurrentgame(gamespec *gs, int offset)
 {
     int	sign, m, n;
 
-    if (offset == 0)
+    if (offset == 0 || noLevelMove)
 	return FALSE;
 
     m = gs->currentgame;
@@ -1898,7 +1900,7 @@ static int initoptionswithcmdline(int argc, char *argv[], startupdata *start)
     soundbufsize = 0;
     volumelevel = -1;
 
-    initoptions(&opts, argc - 1, argv + 1, "abD:dFfHhL:lm:n:PxpqR:rS:stVv");
+    initoptions(&opts, argc - 1, argv + 1, "abD:dFfHhL:lm:n:PxpqR:rS:stVvo");
     while ((ch = readoption(&opts)) >= 0) {
 	switch (ch) {
 	  case 0:
@@ -1949,6 +1951,7 @@ static int initoptionswithcmdline(int argc, char *argv[], startupdata *start)
 	    fprintf(stderr, "unrecognized option: -%c\n", opts.opt);
 	    printtable(stderr, yowzitch);
 	    return FALSE;
+		case 'o': noLevelMove = TRUE; break;
 	  default:
 	    printtable(stderr, yowzitch);
 	    return FALSE;
