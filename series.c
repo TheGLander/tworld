@@ -62,7 +62,7 @@ static void addlevelfile(mfinfovector *v, char *filename, int levelcount, int lo
 /* A callback function to compare mapfileinfo structs */
 static int compare_mapfileinfo(void const *a, void const *b)
 {
-    return stricmp(((mapfileinfo*)a)->filename, ((mapfileinfo*)b)->filename);
+    return strcasecmp(((mapfileinfo*)a)->filename, ((mapfileinfo*)b)->filename);
 }
 
 #ifdef TWPLUSPLUS
@@ -75,7 +75,7 @@ static void removefilenamesuffixes(mfinfovector *v)
 	if (namelength > 4u)
 	{
 	    char *suffix = &v->buf[n].filename[namelength - 4u];
-	    if (!stricmp(suffix, ".dat") || !stricmp(suffix, ".ccl"))
+	    if (!strcasecmp(suffix, ".dat") || !strcasecmp(suffix, ".ccl"))
 		*suffix = '\0';
 	}
     }
@@ -650,7 +650,7 @@ static int getmapfile(char const *filename, void *data)
  */
 static int gameseriescmp_name(void const *a, void const *b)
 {
-    return stricmp(((gameseries*)a)->name, ((gameseries*)b)->name);
+    return strcasecmp(((gameseries*)a)->name, ((gameseries*)b)->name);
 }
 #endif
 
@@ -661,7 +661,7 @@ static int gameseriescmp_mapfilename(void const *a, void const *b)
 {
     char const * namea = skippathname(((gameseries*)a)->mapfilename);
     char const * nameb = skippathname(((gameseries*)b)->mapfilename);
-    return stricmp(namea, nameb);
+    return strcasecmp(namea, nameb);
 }
 
 /* The name we should use for a (currently) nonexisting .dac file */
@@ -722,8 +722,8 @@ static gameseries* createnewseries
     char *newdacname = generatenewdacname(datfile, ruleset);
     int ok = createnewdacfile(newdacname, datfile, ruleset);
     if (!ok) {
-	errmsg(newdacname, "Attempt to create %s ruleset .dac for %s failed",
-	   ruleset == Ruleset_MS ? "MS" : "Lynx", datfile->filename);
+	/* errmsg(newdacname, "Attempt to create %s ruleset .dac for %s failed",
+	   ruleset == Ruleset_MS ? "MS" : "Lynx", datfile->filename); */
     }
     if (errno == EEXIST) return NULL;
 
@@ -769,7 +769,7 @@ static void createallmissingseries(seriesdata *s)
 	memset(seriesrulesetcount, 0, sizeof seriesrulesetcount);
 	mapfileinfo const *currentlevelfile = &s->mfinfo.buf[n];
 	char *currentmapname = currentlevelfile->filename;
-	while (m < nseries && !stricmp(currentmapname, skippathname(s->list[m].mapfilename))) {
+	while (m < nseries && !strcasecmp(currentmapname, skippathname(s->list[m].mapfilename))) {
 	    int ruleset = s->list[m].ruleset;
 	    addgameseries(s->mfinfo.buf[n].sfilelst, m, ruleset);
 	    ++seriesrulesetcount[ruleset];

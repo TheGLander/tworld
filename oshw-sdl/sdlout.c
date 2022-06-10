@@ -8,7 +8,7 @@
 #include	<stdlib.h>
 #include	<string.h>
 #include	<ctype.h>
-#include	"SDL.h"
+#include	"SDL/SDL.h"
 #include	"sdlgen.h"
 #include	"../err.h"
 #include	"../state.h"
@@ -247,6 +247,7 @@ static int createdisplay(void)
     flags = SDL_SWSURFACE | SDL_ANYFORMAT;
     if (fullscreen)
 	flags |= SDL_FULLSCREEN;
+    flags |= SDL_FITWIDTH | SDL_FITHEIGHT | SDL_TOPSCR;
     if (!(geng.screen = SDL_SetVideoMode(screenw, screenh, 32, flags))) {
 	errmsg(NULL, "cannot open %dx%d display: %s\n",
 		     screenw, screenh, SDL_GetError());
@@ -255,6 +256,8 @@ static int createdisplay(void)
     if (geng.screen->w != screenw || geng.screen->h != screenh)
 	warn("requested a %dx%d display, got %dx%d instead",
 	     geng.screen->w, geng.screen->h);
+    SDL_JoystickEventState(TRUE);
+    SDL_JoystickOpen(0);
     return TRUE;
 }
 

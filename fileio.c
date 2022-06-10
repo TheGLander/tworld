@@ -75,7 +75,7 @@ void clearfileinfo(fileinfo *file)
 /* The 'x' modifier (C11) in fopen() is not widely supported as of 2020.
  * This hack enables its use regardless of the underlying libc.
  */
-static FILE *FOPEN(char const *name, char const *mode)
+static FILE *fopen_x(char const *name, char const *mode)
 {
     FILE * file = NULL;
     if (!strcmp(mode, "wx")) {
@@ -109,7 +109,7 @@ int fileopen(fileinfo *file, char const *name, char const *mode,
 	}
     }
     errno = 0;
-    file->fp = FOPEN(name, mode);
+    file->fp = fopen_x(name, mode);
     if (file->fp)
 	return TRUE;
     return fileerr(file, msg);

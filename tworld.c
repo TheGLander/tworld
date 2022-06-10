@@ -822,7 +822,7 @@ static void updatehistory(char const *name, char const *passwd, int number)
     
     h = historylist;
     for (i = 0; i < historycount; ++i, ++h) {
-	if (stricmp(h->name, name) == 0)
+	if (strcasecmp(h->name, name) == 0)
 	    break;
     }
     
@@ -1531,7 +1531,7 @@ static void findlevelfromhistory(gamespec *gs, char const *name)
     name = skippathname(name);
     h = historylist;
     for (i = 0; i < historycount; ++i, ++h) {
-	if (stricmp(h->name, name) == 0) {
+	if (strcasecmp(h->name, name) == 0) {
 	    n = findlevelinseries(&gs->series, h->levelnumber, h->passwd);
 	    if (n < 0)
 	        n = findlevelinseries(&gs->series, 0, h->passwd);
@@ -1604,7 +1604,7 @@ static int findseries(seriesdata *series, int idx)
 static int chooseseries(seriesdata *series, int *pn, int founddefault)
 {
 #ifndef TWPLUSPLUS
-    return displaylist("   Welcome to Tile World. Type ? or F1 for help.",
+    return displaylist("   Welcome to Tile World. Press START for help.",
 		&series->table, pn, LIST_SERIES, scrollinputcallback);    
 #else
     tablespec mftable;

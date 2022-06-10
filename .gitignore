@@ -4,3 +4,6 @@
 /comptime.h
 /oshw-qt/ui_*.h
 /oshw-qt/moc_*.cpp
+build
+*.3dsx
+*.elf
