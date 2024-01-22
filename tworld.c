@@ -1106,6 +1106,10 @@ static int playgame(gamespec *gs, int firstcmd)
 {
     int	render, lastrendered;
     int	cmd, n;
+    int visualtick = 0;
+    int visualtickrate = 6;
+    setvisualtickrate(visualtickrate);
+    settimersecond(1000 / visualtickrate);
 
     cmd = firstcmd;
     if (cmd == CmdProceed)
@@ -1120,13 +1124,21 @@ static int playgame(gamespec *gs, int firstcmd)
 	if (gamepaused)
 	    cmd = input(TRUE);
 	else {
-	    n = doturn(cmd);
+	    if (visualtick == 0) {
+	        n = doturn(cmd);
+	    }
+	    setinterpolation((float)visualtick / visualtickrate);
 	    drawscreen(render);
+	    setinterpolation(0);
 	    lastrendered = render;
 	    if (n)
 	        break;
 	    render = waitfortick() || noframeskip;
-	    cmd = input(FALSE);
+	    if (visualtick == 0) {
+	        cmd = input(FALSE);
+	    }
+	    visualtick += 1;
+	    visualtick %= visualtickrate;
 	}
 	if (cmd == CmdQuitLevel) {
 	    quitgamestate();

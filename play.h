@@ -121,6 +121,8 @@ extern int setmudsuckingfactor(int mud);
  */
 extern void toggleshowinitstate(void);
 
+extern void setinterpolation(float interpolation);
+
 #ifdef __cplusplus
 }
 #endif

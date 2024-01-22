@@ -53,6 +53,7 @@ OSHW_EXTERN void settimer(int action);
  * zero selects the default of 1000 milliseconds.
  */
 OSHW_EXTERN void settimersecond(int ms);
+OSHW_EXTERN void setvisualtickrate(int ms);
 
 /* Return the number of ticks since the timer was last reset.
  */

@@ -277,7 +277,7 @@ static void addtransparenttile(TW_Surface *dest, int id, int index)
  * tile.
  */
 static TW_Surface *getcreatureimage(TW_Rect *rect,
-				     int id, int dir, int moving, int frame)
+				     int id, int dir, int moving, int frame, float interpolation)
 {
     TW_Surface	       *s;
     tilemap const      *q;
@@ -293,10 +293,10 @@ static TW_Surface *getcreatureimage(TW_Rect *rect,
     if (!q->transpsize || isanimation(id)) {
 	if (moving > 0) {
 	    switch (dir) {
-	      case NORTH:	rect->y += moving * geng.htile / 8;	break;
-	      case WEST:	rect->x += moving * geng.wtile / 8;	break;
-	      case SOUTH:	rect->y -= moving * geng.htile / 8;	break;
-	      case EAST:	rect->x -= moving * geng.wtile / 8;	break;
+	      case NORTH:	rect->y += (moving - interpolation) * geng.htile / 8;	break;
+	      case WEST:	rect->x += (moving - interpolation) * geng.wtile / 8;	break;
+	      case SOUTH:	rect->y -= (moving - interpolation) * geng.htile / 8;	break;
+	      case EAST:	rect->x -= (moving - interpolation) * geng.wtile / 8;	break;
 	    }
 	}
     }
@@ -421,6 +421,25 @@ static void drawclippedtile(TW_Rect const *rect, TW_Surface *src,
 
 extern int pedanticmode;
 
+typedef struct viewpos {
+    float x;
+    float y;
+} viewpos;
+
+viewpos getviewpos(gamestate const *state) {
+    viewpos pos = { state->xviewpos, state->yviewpos };
+    creature chip = state->creatures[0];
+    if (chip.moving) {
+	    switch (chip.dir) {
+	      case NORTH:	pos.y -= state->movementinterpolation;	break;
+	      case WEST:	pos.x -= state->movementinterpolation;	break;
+	      case SOUTH:	pos.y += state->movementinterpolation;	break;
+	      case EAST:	pos.x += state->movementinterpolation;	break;
+	    }
+    }
+    return pos;
+}
+
 /* Render the view of the visible area of the map to the display, with
  * the view position centered on the display as much as possible. The
  * gamestate's map and the list of creatures are consulted to
@@ -431,13 +450,15 @@ static void _displaymapview(gamestate const *state, TW_Rect displayloc)
     TW_Rect		rect;
     TW_Surface	       *s;
     creature const     *cr;
-    int			xdisppos, ydisppos;
+    float			xdisppos, ydisppos;
     int			xorigin, yorigin;
     int			lmap, tmap, rmap, bmap;
     int			pos, x, y;
 
-    xdisppos = state->xviewpos / 2 - (NXTILES / 2) * 4;
-    ydisppos = state->yviewpos / 2 - (NYTILES / 2) * 4;
+    viewpos stateviewpos = getviewpos(state);
+
+    xdisppos = stateviewpos.x / 2 - (NXTILES / 2) * 4;
+    ydisppos = stateviewpos.y / 2 - (NYTILES / 2) * 4;
     if (xdisppos < 0)
 	xdisppos = 0;
     if (ydisppos < 0)
@@ -491,7 +512,7 @@ static void _displaymapview(gamestate const *state, TW_Rect displayloc)
 	    continue;
 	rect.x = xorigin + x * geng.wtile;
 	rect.y = yorigin + y * geng.htile;
-	s = getcreatureimage(&rect, cr->id, cr->dir, cr->moving, cr->frame);
+	s = getcreatureimage(&rect, cr->id, cr->dir, cr->moving, cr->frame, state->movementinterpolation);
 	drawclippedtile(&rect, s, displayloc);
     }
 }

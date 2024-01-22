@@ -263,6 +263,7 @@ typedef struct gamestate {
        these are not large enough to make it worth it. */
     struct msstate_ msstate;
     struct lxstate_ lxstate;
+    float movementinterpolation;
 } gamestate;
 
 /* General status flags.

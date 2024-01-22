@@ -37,6 +37,11 @@ void settimersecond(int ms)
     mspertick = (ms ? ms : 1000) / TICKS_PER_SECOND;
 }
 
+static int visualtickrate = 1;
+void setvisualtickrate(int rate) {
+    visualtickrate = rate;
+}
+
 /* Change the current timer setting. If action is positive, the timer
  * is started (or resumed). If action is negative, the timer is
  * stopped if it is running and the counter is reset to zero. If
@@ -63,7 +68,7 @@ void settimer(int action)
  */
 int gettickcount(void)
 {
-    return (int)utick;
+    return (int)utick / visualtickrate;
 }
 
 /* Put the program to sleep until the next timer tick. If we've

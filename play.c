@@ -507,3 +507,7 @@ int checksolution(void)
     state.game->besttime = currenttime;
     return FALSE;
 }
+
+void setinterpolation(float interpolation) {
+    state.movementinterpolation = interpolation;
+}
